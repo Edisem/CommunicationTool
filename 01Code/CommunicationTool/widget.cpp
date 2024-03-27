@@ -5,6 +5,8 @@
 #include <QPainter>
 #include <QTcpSocket>
 
+#include "userwidget.h"
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -16,6 +18,8 @@ Widget::Widget(QWidget *parent)
     this->setFixedSize(428,325);
 
 
+    //创建第二个窗口
+    UserWidget* SecondWidget = new UserWidget;
 
     QTcpSocket* Socket = new QTcpSocket(this);
     Socket->connectToHost("127.0.0.1", 5555); // 连接到服务器端
@@ -28,6 +32,7 @@ Widget::Widget(QWidget *parent)
     // 连接出错时的处理
     connect(Socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), [=](QAbstractSocket::SocketError socketError){
         qDebug() << "Socket error: " << socketError;
+        QMessageBox::critical(this, "错误", "未连接服务器");
     });
 
     //点击登陆按钮触发账号，密码数据库查询检测操作
@@ -45,6 +50,8 @@ Widget::Widget(QWidget *parent)
         }
     });
 
+    connect(this, &Widget::ShowSecondWindomSignal,SecondWidget,&UserWidget::ShowWidget);
+
     //读取到服务器的返回数据
     connect(Socket, &QTcpSocket::readyRead,[=](){
         QByteArray Data = Socket->readAll();
@@ -52,6 +59,7 @@ Widget::Widget(QWidget *parent)
         if (AcceptData == "Succeed")
         {
              this->hide();
+             emit ShowSecondWindomSignal();
         }
         else if(AcceptData == "PasswordError")
         {

@@ -16,6 +16,9 @@ public:
     ~Widget();
 
     void paintEvent(QPaintEvent *event);
+
+signals:
+    void ShowSecondWindomSignal();
 private:
     Ui::Widget *ui;
 };

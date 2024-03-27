@@ -9,6 +9,8 @@
 #include <QDtls>
 #include <QMessageBox>
 
+#include "mytcpserver.h"
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
@@ -42,7 +44,7 @@ Widget::Widget(QWidget *parent)
     */
 
     //创建服务器
-    Server = new QTcpServer(this);
+    Server = new myTcpServer(this);
     if(!Server->listen(QHostAddress::Any,5555))
        {
            QMessageBox::critical(this, "失败", "服务器启动失败");
@@ -50,7 +52,7 @@ Widget::Widget(QWidget *parent)
            QMessageBox::information(this, "成功", "服务器启动成功");
        }
 
-    connect(Server,&QTcpServer::newConnection,this, &Widget::DealConnect);
+    //connect(Server,&QTcpServer::newConnection,this, &Widget::DealConnect);
 }
 
 Widget::~Widget()
